@@ -10,15 +10,15 @@ fun main() {
 
     fun part1(input: List<Int>): Int {
 
-        return input.windowed(2).flatMap {
+        return input.windowed(2).sumOf {
             val (last, current) = it
             val increase = current - last
             if (increase > 0){
-                listOf(1)
+                1 as Int
             } else {
-                listOf()
+                0
             }
-        }.count()
+        }
 
     }
 
@@ -32,15 +32,15 @@ fun main() {
         val windowSums = valueWindows.map { it.sum() }
         val diffWindows = windowSums.windowed(2)
 
-        return diffWindows.flatMap {
+        return diffWindows.sumOf {
             val (last, current) = it
             val increase = current - last
             if (increase > 0){
-                listOf(1)
+                1 as Int
             } else {
-                listOf()
+                0
             }
-        }.count()
+        }
     }
 
     val part2Result = part2(depths)
