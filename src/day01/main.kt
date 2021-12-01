@@ -4,20 +4,39 @@ import bindReadInput
 
 val readInput = bindReadInput("day01")
 
+enum class Difference{
+    NA,
+    INCREASED,
+    DECREASED
+}
+
 fun main() {
-    fun part1(input: List<String>): Int {
-        return input.size
-    }
-
-    fun part2(input: List<String>): Int {
-        return input.size
-    }
-
-    // test if implementation meets criteria from the description, like:
-    val testInput = readInput("output_test.txt")
-    check(part1(testInput) == 1)
-
     val input = readInput("input.txt")
-    println(part1(input))
-    println(part2(input))
+    val depths = input.map { it.toInt()}
+
+    fun part1(input: List<Int>): Int {
+
+        var lastValue = input.first()
+        val differences = depths.map {
+            val currentValue = it
+            val increase = currentValue - lastValue
+            //println("$lastValue -> $currentValue = $increase")
+            lastValue = currentValue
+
+            if(increase == 0) {
+                Difference.NA
+            } else if (increase > 0){
+                Difference.INCREASED
+            } else {
+                Difference.DECREASED
+            }
+        }
+
+        return differences.count { it == Difference.INCREASED }
+    }
+
+    val part1Result = part1(depths)
+    println("Part1: $part1Result")
+
+
 }
