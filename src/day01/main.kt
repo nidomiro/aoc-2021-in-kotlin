@@ -27,4 +27,23 @@ fun main() {
 
 
 
+    fun part2(input: List<Int>): Int {
+        val valueWindows = input.windowed(3)
+        val windowSums = valueWindows.map { it.sum() }
+        val diffWindows = windowSums.windowed(2)
+
+        return diffWindows.flatMap {
+            val (last, current) = it
+            val increase = current - last
+            if (increase > 0){
+                listOf(1)
+            } else {
+                listOf()
+            }
+        }.count()
+    }
+
+    val part2Result = part2(depths)
+    println("Part2: $part2Result")
+
 }
