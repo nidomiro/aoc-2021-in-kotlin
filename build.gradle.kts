@@ -9,11 +9,21 @@ repositories {
 tasks {
     sourceSets {
         main {
-            java.srcDirs("src")
+
+        }
+        test {
+            dependencies {
+                implementation("io.kotest:kotest-runner-junit5:5.0.1")
+                implementation("io.kotest:kotest-property:5.0.1")
+            }
         }
     }
 
     wrapper {
         gradleVersion = "7.3"
     }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
