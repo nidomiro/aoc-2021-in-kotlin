@@ -6,13 +6,13 @@ val readInput = bindReadInput("day01")
 
 fun main() {
     val input = readInput("input.txt")
-    val depths = input.map { it.toInt()}
+    val depths = input.map { it.toInt() }
 
     fun Sequence<Int>.increasingValuesCount(): Int {
         return windowed(2).sumOf {
             val (last, current) = it
             val increase = current - last
-            if (increase > 0){
+            if (increase > 0) {
                 1 as Int
             } else {
                 0

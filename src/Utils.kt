@@ -7,7 +7,7 @@ import java.security.MessageDigest
  */
 fun readInputFromRoot(name: String) = File("src", name).readLines()
 fun readInput(folder: String, name: String) = File("src/${folder}", name).readLines()
-fun bindReadInput(folder: String): (String) -> List<String> = {name -> readInput(folder, name)}
+fun bindReadInput(folder: String): (String) -> List<String> = { name -> readInput(folder, name) }
 
 
 /**
