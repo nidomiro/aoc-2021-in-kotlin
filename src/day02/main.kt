@@ -10,6 +10,12 @@ sealed class Direction {
     data class Down(val amount: Int) : Direction()
 }
 
+data class SubPositionAndAim(
+    val x: Int,
+    val depth: Int,
+    val aim: Int
+)
+
 fun main() {
     val input = readInput("input.txt")
 
@@ -43,13 +49,21 @@ fun main() {
     println("Part1: Coordinates (x, depth): $part1Result")
     println("Part1: Multiplied: ${part1Result.first * part1Result.second}")
 
-//    fun part2(input: List<Int>): Int {
-//        val valueWindows = input.asSequence().windowed(3)
-//        val windowSums = valueWindows.map { it.sum() }
-//        return windowSums.increasingValuesCount()
-//    }
-//
-//    val part2Result = part2(depths)
-//    println("Part2: $part2Result")
+
+
+    fun part2(input: Sequence<Direction>): SubPositionAndAim {
+        return input.fold(SubPositionAndAim(0,0,0)) { acc, direction ->
+            val (x, depth, aim) = acc
+            when (direction) {
+                is Direction.Forward -> acc.copy(x = x+ direction.amount, depth = depth + aim * direction.amount)
+                is Direction.Up -> acc.copy(aim = aim - direction.amount)
+                is Direction.Down -> acc.copy(aim = aim + direction.amount)
+            }
+        }
+    }
+
+    val part2Result = part2(directions)
+    println("Part2: Coordinates (x, depth): $part2Result")
+    println("Part2: Multiplied: ${part2Result.first * part2Result.second}")
 
 }
