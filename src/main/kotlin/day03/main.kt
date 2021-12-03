@@ -14,20 +14,27 @@ data class PowerReport(
 data class BitStatistics(var zeroCount: Int, var oneCount: Int)
 
 
-fun part1(input: List<String>): PowerReport {
-    val bitPositionStatistics = MutableList<BitStatistics>(input[0].length) {BitStatistics(0,0)}
-    for (reading in input) {
-
-        for ((index, bit) in reading.withIndex()) {
-            val statisticsEntry = bitPositionStatistics.getOrElse(index) { BitStatistics(0, 0) }
+fun Sequence<String>.calcBitStatistics(): List<BitStatistics> {
+    return this.fold(mutableListOf()) {acc, line ->
+        if(acc.count() < line.length) {
+            acc += MutableList(line.length) {BitStatistics(0,0)}
+        }
+        for ((index, bit) in line.withIndex()) {
+            val statisticsEntry = acc[index]
             when (bit) {
                 '0' -> statisticsEntry.zeroCount++
                 '1' -> statisticsEntry.oneCount++
                 else -> throw IllegalArgumentException("A bit can only be 1 or 0, but was $bit")
             }
-            bitPositionStatistics[index] = statisticsEntry
+            acc[index] = statisticsEntry
         }
+        return@fold acc
     }
+}
+
+
+fun part1(input: List<String>): PowerReport {
+    val bitPositionStatistics = input.asSequence().calcBitStatistics()
     val gammaRateInBits = bitPositionStatistics.fold("") { acc, bitStatistics ->
         when {
             bitStatistics.oneCount > bitStatistics.zeroCount -> acc + "1"
