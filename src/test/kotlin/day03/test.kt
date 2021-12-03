@@ -27,5 +27,13 @@ class Tests : DescribeSpec({
         }
     }
 
+    describe("part2") {
+        it("fulfills the given example") {
+            val result = part2(input)
+            result shouldBe LifeSupportReport(oxygenGeneratorRating = 23, co2ScrubberRating = 10)
+            result.multiplied shouldBe 230
+        }
+    }
+
 
 })
