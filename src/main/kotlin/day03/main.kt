@@ -35,9 +35,9 @@ data class BitStatistics(var zeroCount: Int, var oneCount: Int) {
 
 
 fun List<String>.calcBitStatistics(): List<BitStatistics> {
-    return this.fold(mutableListOf()) {acc, line ->
-        if(acc.count() < line.length) {
-            acc += MutableList(line.length) {BitStatistics(0,0)}
+    return this.fold(mutableListOf()) { acc, line ->
+        if (acc.count() < line.length) {
+            acc += MutableList(line.length) { BitStatistics(0, 0) }
         }
         for ((index, bit) in line.withIndex()) {
             val statisticsEntry = acc[index]
@@ -73,69 +73,47 @@ fun part1(input: List<String>): PowerReport {
 
 fun part2(input: List<String>): LifeSupportReport {
 
-
-
-    fun calcOxygenGeneratorRating(input: List<String>): Int {
-
-        fun bitMatchesOxygenGeneratorRatingAtPosition(position: Int, line: String, bitPositionStatistics: List<BitStatistics>): Boolean {
-            val statistics = bitPositionStatistics[position]
-            val mostCommonBit = statistics.mostCommonBit
-
-            val bit = line[position]
-
-            return when {
-                mostCommonBit == null && bit == '1' -> true
-                mostCommonBit == '1' && bit == '1' -> true
-                mostCommonBit == '0' && bit == '0' -> true
-                else -> false
-            }
-        }
-
-        var oxygenFilteredInput = input
-        var bitPositionStatistics = oxygenFilteredInput.calcBitStatistics()
-        var position = 0
-        while (oxygenFilteredInput.count() > 1) {
-            oxygenFilteredInput = oxygenFilteredInput.filter {
-                bitMatchesOxygenGeneratorRatingAtPosition(position, it, bitPositionStatistics)
-            }
-            bitPositionStatistics = oxygenFilteredInput.calcBitStatistics()
-            position++
-        }
-        return oxygenFilteredInput.first().toInt(2)
-    }
-
-    fun calcCO2ScrubberRating(input: List<String>): Int {
-
-        fun bitMatchesAtPosition(position: Int, line: String, bitPositionStatistics: List<BitStatistics>): Boolean {
-            val statistics = bitPositionStatistics[position]
-            val leastCommonBit = statistics.leastCommonBit
-
-            val bit = line[position]
-
-            return when {
-                leastCommonBit == null && bit == '0' -> true
-                leastCommonBit == '1' && bit == '1' -> true
-                leastCommonBit == '0' && bit == '0' -> true
-                else -> false
-            }
-        }
-
+    fun calcBitValue(input: List<String>, bitMatchesAtPosition: (bit: Char, bitStatistics: BitStatistics) -> Boolean): Int {
         var filteredInput = input
-        var bitPositionStatistics = filteredInput.calcBitStatistics()
+        var bitPositionStatistics =
+            filteredInput.calcBitStatistics() // Could be optimized to calc the statistics only for the first position
         var position = 0
         while (filteredInput.count() > 1) {
             filteredInput = filteredInput.filter {
-                bitMatchesAtPosition(position, it, bitPositionStatistics)
+                val statistics = bitPositionStatistics[position]
+                val bit = it[position]
+                bitMatchesAtPosition(bit, statistics)
             }
-            bitPositionStatistics = filteredInput.calcBitStatistics()
+            bitPositionStatistics =
+                filteredInput.calcBitStatistics() // Could be optimized to calc the statistics only for the given position
             position++
         }
         return filteredInput.first().toInt(2)
     }
 
+    val oxygenGeneratorRating = calcBitValue(input) { bit, statistics ->
+        val mostCommonBit = statistics.mostCommonBit
 
+        return@calcBitValue when {
+            mostCommonBit == null && bit == '1' -> true
+            mostCommonBit == '1' && bit == '1' -> true
+            mostCommonBit == '0' && bit == '0' -> true
+            else -> false
+        }
+    }
 
-    return LifeSupportReport(oxygenGeneratorRating = calcOxygenGeneratorRating(input), co2ScrubberRating = calcCO2ScrubberRating(input))
+    val co2ScrubberRating = calcBitValue(input) { bit, statistics ->
+        val leastCommonBit = statistics.leastCommonBit
+
+        return@calcBitValue when {
+            leastCommonBit == null && bit == '0' -> true
+            leastCommonBit == '1' && bit == '1' -> true
+            leastCommonBit == '0' && bit == '0' -> true
+            else -> false
+        }
+    }
+
+    return LifeSupportReport(oxygenGeneratorRating, co2ScrubberRating)
 }
 
 fun main() {
@@ -145,7 +123,7 @@ fun main() {
     println("Part1: $part1Result, Multiplied: ${part1Result.multiplied}")
 
     val part2Result = part2(input)
-    println("Part1: $part2Result, Multiplied: ${part2Result.multiplied}")
+    println("Part2: $part2Result, Multiplied: ${part2Result.multiplied}")
 
 
 }
