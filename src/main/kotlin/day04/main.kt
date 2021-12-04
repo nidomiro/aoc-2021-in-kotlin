@@ -4,24 +4,80 @@ import bindReadInput
 
 val readInput = bindReadInput("day04")
 
-data class Board(val fields: List<List<Int>>) {
+data class Board(
+    val fields: List<List<Int>>,
+    val markedFields: MutableList<MutableList<Boolean>> = MutableList(5) { MutableList(5) { false } }
+) {
 
-    fun numberDrawn(number: Int): Boolean {
-        return false
+    fun numberDrawn(number: Int): Int? {
+        fields.forEachIndexed { rowIndex, row ->
+            val columnIndex = row.indexOf(number)
+            if (columnIndex >= 0) {
+                markedFields[rowIndex][columnIndex] = true
+            }
+        }
+        println("===============")
+        markedFields.forEach { row ->
+            println(row.joinToString())
+        }
+        println("===============")
+
+        val winningRowIndex = markedFields.indexOfFirst { row -> row.all { it } }
+        if(winningRowIndex >= 0) {
+            return sumOfUnmarkedNumbers()
+        }
+
+        fun calcWinningColumnIndex(): Int? {
+            var index: Int? = null
+            for(colIndex in 0..4) {
+                var colComplete = true
+                for (rowIndex in 0..4) {
+                    colComplete = colComplete && markedFields[rowIndex][colIndex]
+                }
+                if(colComplete) {
+                    index = colIndex
+                    break
+                }
+            }
+            return index
+        }
+
+        val winningColumnIndex= calcWinningColumnIndex()
+        if(winningColumnIndex != null) {
+            return sumOfUnmarkedNumbers()
+        }
+
+
+        return null
     }
+
+    fun sumOfUnmarkedNumbers(): Int {
+        var sum = 0
+        for(rowIndex in 0..4) {
+            for (colIndex in 0..4) {
+                if(!markedFields[rowIndex][colIndex]) {
+                    sum += fields[rowIndex][colIndex]
+                }
+            }
+        }
+        return sum
+    }
+
 
     companion object {
         fun fromString(boardString: String): Board {
             return Board(
                 boardString.split("\n", "\r\n")
-                    .map { it.split(" ").flatMap {
-                        val trimmed = it.trim()
-                        if(trimmed.isEmpty()) {
-                            listOf()
-                        } else {
-                            listOf(trimmed.toInt())
+                    .map {
+                        it.split(" ").flatMap {
+                            val trimmed = it.trim()
+                            if (trimmed.isEmpty()) {
+                                listOf()
+                            } else {
+                                listOf(trimmed.toInt())
+                            }
                         }
-                    } }
+                    }
             )
         }
     }
@@ -39,14 +95,26 @@ data class BingoGame(val randomNumbers: List<Int>, val boards: List<Board>) {
     }
 }
 
-data class Part1Result(val winningBoard: Int, val winningRowSum: Int, val lastDrawnNumber: Int, val finalScore: Int = winningBoard*lastDrawnNumber)
+data class Part1Result(val winningRowSum: Int, val lastDrawnNumber: Int, val finalScore: Int = winningRowSum * lastDrawnNumber)
 
-fun part1(input: String): Part1Result {
+fun part1(input: String): Part1Result? {
     val game = BingoGame.fromString(input)
 
+    return game.randomNumbers.fold(null as Part1Result?) { acc, number ->
+        if (acc != null) {
+            return@fold acc
+        }
+        println("@@@@ New Number drawn: $number @@@@")
 
+        val winningBoards = game.boards.mapNotNull { it.numberDrawn(number) }
+        println("")
+        if (winningBoards.isEmpty()) {
+            null
+        } else {
+            Part1Result(winningBoards[0], number)
+        }
 
-    return Part1Result(0,0,0)
+    }
 }
 
 fun main() {
@@ -54,7 +122,6 @@ fun main() {
 
     val part1Result = part1(input)
     println("Part1: $part1Result")
-
 
 
 }
