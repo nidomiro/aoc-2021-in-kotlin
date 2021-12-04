@@ -1,8 +1,8 @@
 package day02
 
-import bindReadInput
+import bindReadInputLines
 
-val readInput = bindReadInput("day02")
+val readInput = bindReadInputLines("day02")
 
 sealed class Direction {
     data class Forward(val amount: Int) : Direction()

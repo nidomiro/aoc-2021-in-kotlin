@@ -6,8 +6,11 @@ import java.security.MessageDigest
  * Reads lines from the given input txt file.
  */
 fun readInputFromRoot(name: String) = File("src", name).readLines()
-fun readInput(folder: String, name: String) = File("src/main/kotlin/${folder}", name).readLines()
-fun bindReadInput(folder: String): (String) -> List<String> = { name -> readInput(folder, name) }
+fun readInputLines(folder: String, name: String) = File("src/main/kotlin/${folder}", name).readLines()
+fun bindReadInputLines(folder: String): (String) -> List<String> = { name -> readInputLines(folder, name) }
+
+fun readInput(folder: String, name: String) = File("src/main/kotlin/${folder}", name).readText()
+fun bindReadInput(folder: String): (String) -> String = { name -> readInput(folder, name) }
 
 
 /**

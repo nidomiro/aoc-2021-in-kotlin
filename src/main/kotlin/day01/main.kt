@@ -1,8 +1,8 @@
 package day01
 
-import bindReadInput
+import bindReadInputLines
 
-val readInput = bindReadInput("day01")
+val readInput = bindReadInputLines("day01")
 
 fun Sequence<Int>.increasingValuesCount(): Int {
     return windowed(2).sumOf {

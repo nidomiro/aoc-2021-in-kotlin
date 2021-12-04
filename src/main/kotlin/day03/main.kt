@@ -1,8 +1,8 @@
 package day03
 
-import bindReadInput
+import bindReadInputLines
 
-val readInput = bindReadInput("day03")
+val readInput = bindReadInputLines("day03")
 
 data class PowerReport(
     val gammaRate: Int,
