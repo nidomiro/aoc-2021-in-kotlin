@@ -95,7 +95,7 @@ data class BingoGame(val randomNumbers: List<Int>, val boards: List<Board>) {
     }
 }
 
-data class Part1Result(val winningRowSum: Int, val lastDrawnNumber: Int, val finalScore: Int = winningRowSum * lastDrawnNumber)
+data class Part1Result(val winningBoardUnmarkedNumbersSum: Int, val lastDrawnNumber: Int, val finalScore: Int = winningBoardUnmarkedNumbersSum * lastDrawnNumber)
 
 fun part1(input: String): Part1Result? {
     val game = BingoGame.fromString(input)
@@ -117,11 +117,35 @@ fun part1(input: String): Part1Result? {
     }
 }
 
+data class Part2Result(val loosingBoardUnmarkedNumbersSum: Int, val lastDrawnNumber: Int, val finalScore: Int = loosingBoardUnmarkedNumbersSum * lastDrawnNumber)
+
+fun part2(input: String): Part2Result {
+    val game = BingoGame.fromString(input)
+
+    var boards = game.boards
+    var lastNumber = -1
+    var lastWinningBoard: Board? = null
+    for(number in game.randomNumbers) {
+        lastNumber = number
+        val loosingBoards = boards.filter { it.numberDrawn(number) == null }
+        if(loosingBoards.isEmpty()) {
+            lastWinningBoard = boards.first()
+            break
+        }
+        boards = loosingBoards
+    }
+
+    return Part2Result(lastWinningBoard?.sumOfUnmarkedNumbers() ?: -1, lastNumber)
+}
+
 fun main() {
     val input = readInput("input.txt")
 
     val part1Result = part1(input)
     println("Part1: $part1Result")
+
+    val part2Result = part2(input)
+    println("Part2: $part2Result")
 
 
 }
