@@ -18,13 +18,47 @@ class Tests : DescribeSpec({
     )
 
     it("Line parsing works") {
-        val result = Line.fromString(input[0])
-        result shouldBe Line(Point(0, 9), Point(5, 9))
+        val result = HorOrVerLine.fromString(input[0])
+        result shouldBe HorOrVerLine(Point(0, 9), Point(5, 9))
     }
 
     it("Point substraction") {
         val result = Point(5, 4) - Point(1, 2)
         result shouldBe Point(4, 2)
+    }
+
+    it("Line Points") {
+
+        val line = HorOrVerLine.fromString("3,4 -> 1,4")
+        println(line.linePoints)
+
+        line.linePoints shouldBe listOf(
+            Point(3, 4),
+            Point(2, 4),
+            Point(1, 4),
+        )
+    }
+
+    it("Line Intersection") {
+        val line1 = HorOrVerLine.fromString("0,9 -> 3,9")
+        val line2 = HorOrVerLine.fromString("0,9 -> 5,9")
+        line1.intersectionPoints(line2) shouldBe listOf(
+            Point(0, 9),
+            Point(1, 9),
+            Point(2, 9),
+            Point(3, 9),
+        )
+    }
+
+    it("Line Intersection2") {
+        val line1 = HorOrVerLine.fromString("9,4 -> 3,4")
+        println(line1.linePoints)
+        val line2 = HorOrVerLine.fromString("3,4 -> 1,4")
+        println(line2.linePoints)
+
+        line1.intersectionPoints(line2) shouldBe listOf(
+            Point(3, 4)
+        )
     }
 
     describe("part1") {
