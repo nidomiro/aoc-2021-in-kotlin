@@ -18,8 +18,8 @@ class Tests : DescribeSpec({
     )
 
     it("Line parsing works") {
-        val result = HorOrVerLine.fromString(input[0])
-        result shouldBe HorOrVerLine(Point(0, 9), Point(5, 9))
+        val result = HorVerOrDiagLine.fromString(input[0])
+        result shouldBe HorVerOrDiagLine(Point(0, 9), Point(5, 9))
     }
 
     it("Point substraction") {
@@ -29,7 +29,7 @@ class Tests : DescribeSpec({
 
     it("Line Points") {
 
-        val line = HorOrVerLine.fromString("3,4 -> 1,4")
+        val line = HorVerOrDiagLine.fromString("3,4 -> 1,4")
         println(line.linePoints)
 
         line.linePoints shouldBe listOf(
@@ -40,8 +40,8 @@ class Tests : DescribeSpec({
     }
 
     it("Line Intersection") {
-        val line1 = HorOrVerLine.fromString("0,9 -> 3,9")
-        val line2 = HorOrVerLine.fromString("0,9 -> 5,9")
+        val line1 = HorVerOrDiagLine.fromString("0,9 -> 3,9")
+        val line2 = HorVerOrDiagLine.fromString("0,9 -> 5,9")
         line1.intersectionPoints(line2) shouldBe listOf(
             Point(0, 9),
             Point(1, 9),
@@ -51,9 +51,9 @@ class Tests : DescribeSpec({
     }
 
     it("Line Intersection2") {
-        val line1 = HorOrVerLine.fromString("9,4 -> 3,4")
+        val line1 = HorVerOrDiagLine.fromString("9,4 -> 3,4")
         println(line1.linePoints)
-        val line2 = HorOrVerLine.fromString("3,4 -> 1,4")
+        val line2 = HorVerOrDiagLine.fromString("3,4 -> 1,4")
         println(line2.linePoints)
 
         line1.intersectionPoints(line2) shouldBe listOf(
