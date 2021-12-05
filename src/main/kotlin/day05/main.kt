@@ -19,13 +19,25 @@ data class Point(val x: Int, val y: Int) {
     fun calcVerticalOrHorizontalPointsTo(other: Point): List<Point> {
         val direction = other - this
         return if (abs(direction.x) == 0 && abs(direction.y) == 0) {
-            return listOf(this)
+            listOf(this)
         } else if (abs(direction.x) > 0) {
             val sign = if (direction.x < 0) -1 else 1
             List(abs(direction.x) + 1) { Point(this.x + it * sign, this.y) }
         } else {
             val sign = if (direction.y < 0) -1 else 1
             List(abs(direction.y) + 1) { Point(this.x, this.y + it * sign) }
+        }
+
+    }
+
+    fun calcVerticalOrHorizontalOrDiagonalPointsTo(other: Point): List<Point> {
+        val direction = other - this
+        return if (abs(direction.x) == abs(direction.y) && abs(direction.x) != 0) {
+            val signX = if (direction.x < 0) -1 else 1
+            val signY = if (direction.y < 0) -1 else 1
+            List(abs(direction.x) + 1) { Point(this.x + it * signX, this.y + it * signY) }
+        } else {
+           calcVerticalOrHorizontalPointsTo(other)
         }
 
     }
@@ -40,24 +52,13 @@ operator fun Double.times(other: Point): Point {
 
 data class HorOrVerLine(val start: Point, val end: Point) {
 
-    val linePoints = start.calcVerticalOrHorizontalPointsTo(end)
-
-    val direction = end - start
+    val linePoints = start.calcVerticalOrHorizontalOrDiagonalPointsTo(end)
 
     val isHorizontal = start.x == end.x
     val isVertical = start.y == end.y
 
     fun intersectionPoints(other: HorOrVerLine): List<Point> {
-        val intersectionPoints = this.linePoints.intersect(other.linePoints.toSet()).toList()
-
-//        println("@@@")
-//        println("Line1 $this")
-//        println("Line2 $other")
-//        println(intersectionPoints)
-//        println()
-//        println()
-
-        return intersectionPoints
+        return linePoints.intersect(other.linePoints.toSet()).toList()
     }
 
     companion object {
@@ -69,6 +70,7 @@ data class HorOrVerLine(val start: Point, val end: Point) {
 }
 
 data class Part1Result(val intersectionCount: Int)
+data class Part2Result(val intersectionCount: Int)
 
 fun part1(input: List<String>): Part1Result {
     val lines = input
@@ -85,14 +87,28 @@ fun part1(input: List<String>): Part1Result {
     return Part1Result(intersectingPoints.count())
 }
 
+fun part2(input: List<String>): Part2Result {
+    val lines = input
+        .map { HorOrVerLine.fromString(it) }
+
+    val intersectingPoints = lines.flatMapIndexed { index, line1 ->
+        lines
+            .subList(index + 1, lines.size)
+            .flatMap { line2 ->
+                line1.intersectionPoints(line2)
+            }
+    }.toSet()
+    return Part2Result(intersectingPoints.count())
+}
+
 fun main() {
     val input = readInput("input.txt")
 
     val part1Result = part1(input)
     println("Part1: $part1Result")
 
-//    val part2Result = part2(input)
-//    println("Part2: $part2Result")
+    val part2Result = part2(input)
+    println("Part2: $part2Result")
 
 
 }

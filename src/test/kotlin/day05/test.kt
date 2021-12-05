@@ -69,5 +69,13 @@ class Tests : DescribeSpec({
         }
     }
 
+    describe("part2") {
+
+        it("fulfills the given example") {
+            val result = part2(input)
+            result shouldBe Part2Result(12)
+        }
+    }
+
 
 })
