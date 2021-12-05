@@ -17,6 +17,15 @@ class Tests : DescribeSpec({
         "5,5 -> 8,2"
     )
 
+    it("Line parsing works") {
+        val result = Line.fromString(input[0])
+        result shouldBe Line(Point(0, 9), Point(5, 9))
+    }
+
+    it("Point substraction") {
+        val result = Point(5, 4) - Point(1, 2)
+        result shouldBe Point(4, 2)
+    }
 
     describe("part1") {
 
